@@ -86,4 +86,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ---------- Rastreo de interacciones (Google Analytics) ---------- */
+  const trackEvent = (name, params = {}) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', name, params);
+    }
+  };
+
+  // Clics en cualquier botón/enlace de WhatsApp
+  document.querySelectorAll('a[href*="wa.me"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      trackEvent('click_whatsapp', { location: link.closest('section')?.className || 'header_or_float' });
+    });
+  });
+
+  // Selección de plan (mensual / anual)
+  document.querySelectorAll('.plan-half .btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const plan = btn.closest('.plan-half--featured') ? 'anual' : 'mensual';
+      trackEvent('select_plan', { plan });
+    });
+  });
+
+  // Clics en redes sociales del footer
+  document.querySelectorAll('.social-icon').forEach((icon) => {
+    icon.addEventListener('click', () => {
+      trackEvent('click_social', { network: icon.getAttribute('aria-label') });
+    });
+  });
+
+  // Apertura de preguntas frecuentes
+  faqItems.forEach((item) => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      if (item.classList.contains('open')) {
+        const question = item.querySelector('.faq-q span')?.textContent;
+        trackEvent('open_faq', { question });
+      }
+    });
+  });
+
+  // Clics en el menú de navegación
+  document.querySelectorAll('.nav-links a').forEach((link) => {
+    link.addEventListener('click', () => {
+      trackEvent('nav_click', { section: link.getAttribute('href') });
+    });
+  });
+
 });
